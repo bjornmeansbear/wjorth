@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+/* kit.css is copied verbatim from ~/Code/color-system-and-guidelines.
+   Layered as base so Tailwind utilities still win over its element rules. */
+@import '../lib/kit.css' layer(base);
+
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
+:root {
+	/* IBM Plex Mono for every number (dates, dollar amounts) — tabular figure
+	   alignment matters for a ledger. UI text stays on the kit's system-sans
+	   default. Self-hosted via @fontsource (OFL), not hotlinked from Google
+	   Fonts, per the kit's "self-host OFL, don't hotlink" convention. */
+	--font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+	/* Data-ink colors for charts — distinct from --color-accent/-danger/-success,
+	   which are reserved for status flags (e.g. budget overspend). Per
+	   RULES.md "Data on screen": pink is the primary series; a second series
+	   gets its own hue plus a dash pattern (applied in chartTheme.ts) so it
+	   survives grayscale. green-6 reads as brown per the kit's own tint
+	   notes — green-5 is called out as "the most visibly green step that
+	   still holds 3:1 as a line," so that's the pick for data ink specifically,
+	   not the semantic --color-success token. */
+	--color-data-primary: var(--pink-5);
+	--color-data-secondary: var(--green-5);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: dark;
+
+		/* The measured mapping from RULES.md "Dark mode" — kit.css itself
+		   ships dark-mode-inert (color-scheme: light pinned), so this project
+		   is the one wiring the tokens, per NOTES.md's open invitation. */
+		--color-bg: var(--brown-9);
+		--color-surface: var(--brown-9);
+		--color-surface-2: var(--brown-9);
+		--color-text: var(--brown-0); /* 18.81:1 */
+		--color-text-muted: var(--brown-3); /* 10.49:1 */
+		--color-text-subtle: var(--brown-4); /* 7.06:1 — the dimness floor; brown-5 fails AA */
+		--color-border: var(--color-text);
+		--color-border-subtle: var(--color-text);
+		--color-frame: var(--color-text);
+
+		--color-accent: var(--pink-3); /* 8.80:1 — NOT pink-5, which drops to ~3.9:1 in dark */
+		--color-accent-hover: var(--pink-2);
+		--color-accent-subtle: var(--pink-8);
+
+		--color-success: var(--green-3);
+		--color-success-bg: var(--green-8);
+		--color-warning: var(--yellow-3);
+		--color-warning-bg: var(--yellow-8);
+		--color-danger: var(--red-3);
+		--color-danger-bg: var(--red-8);
+		--color-info: var(--dark-gray-3);
+		--color-info-bg: var(--dark-gray-8);
+
+		/* Not yet visually validated against the dark ground — flagged in the
+		   plan as a Phase 8 check, same as the light-mode green-5 pick. */
+		--color-data-primary: var(--pink-3);
+		--color-data-secondary: var(--green-4);
+	}
+}
+
+:root[data-theme='dark'] {
+	/* Manual toggle override — identical values to the media-query block
+	   above, applied regardless of OS preference. */
+	color-scheme: dark;
+	--color-bg: var(--brown-9);
+	--color-surface: var(--brown-9);
+	--color-surface-2: var(--brown-9);
+	--color-text: var(--brown-0);
+	--color-text-muted: var(--brown-3);
+	--color-text-subtle: var(--brown-4);
+	--color-border: var(--color-text);
+	--color-border-subtle: var(--color-text);
+	--color-frame: var(--color-text);
+	--color-accent: var(--pink-3);
+	--color-accent-hover: var(--pink-2);
+	--color-accent-subtle: var(--pink-8);
+	--color-success: var(--green-3);
+	--color-success-bg: var(--green-8);
+	--color-warning: var(--yellow-3);
+	--color-warning-bg: var(--yellow-8);
+	--color-danger: var(--red-3);
+	--color-danger-bg: var(--red-8);
+	--color-info: var(--dark-gray-3);
+	--color-info-bg: var(--dark-gray-8);
+	--color-data-primary: var(--pink-3);
+	--color-data-secondary: var(--green-4);
+}
+
+:root[data-theme='light'] {
+	/* Manual toggle override — forces light even under a dark OS preference. */
+	color-scheme: light;
+}
+
+@theme {
+	--color-*: initial;
+	--font-*: initial;
+	--text-*: initial;
+	--breakpoint-*: initial;
+
+	--breakpoint-tablet: 40rem;
+	--breakpoint-desktop: 55rem;
+
+	--container-tablet: 40rem;
+	--container-desktop: 55rem;
+
+	/* p-1 = 6px, p-4 = 24px: spacing rides the same rhythm as the type. */
+	--spacing: 0.375rem;
+}
+
+@theme inline reference {
+	--color-bg: var(--color-bg);
+	--color-surface: var(--color-surface);
+	--color-text: var(--color-text);
+	--color-text-muted: var(--color-text-muted);
+	--color-text-subtle: var(--color-text-subtle);
+	--color-border: var(--color-border);
+	--color-accent: var(--color-accent);
+	--color-accent-hover: var(--color-accent-hover);
+	--color-accent-subtle: var(--color-accent-subtle);
+	--color-success: var(--color-success);
+	--color-success-bg: var(--color-success-bg);
+	--color-warning: var(--color-warning);
+	--color-warning-bg: var(--color-warning-bg);
+	--color-danger: var(--color-danger);
+	--color-danger-bg: var(--color-danger-bg);
+	--color-info: var(--color-info);
+	--color-info-bg: var(--color-info-bg);
+	--color-data-primary: var(--color-data-primary);
+	--color-data-secondary: var(--color-data-secondary);
+
+	--font-sans: var(--font-sans);
+	--font-display: var(--font-display);
+	--font-mono: var(--font-mono);
+
+	--text-2xs: var(--text-2xs);
+	--text-2xs--line-height: var(--leading-2xs);
+	--text-xs: var(--text-xs);
+	--text-xs--line-height: var(--leading-xs);
+	--text-sm: var(--text-sm);
+	--text-sm--line-height: var(--leading-sm);
+	--text-base: var(--text-base);
+	--text-base--line-height: var(--leading-base);
+	--text-md: var(--text-md);
+	--text-md--line-height: var(--leading-md);
+	--text-lg: var(--text-lg);
+	--text-lg--line-height: var(--leading-lg);
+	--text-xl: var(--text-xl);
+	--text-xl--line-height: var(--leading-xl);
+	--text-2xl: var(--text-2xl);
+	--text-2xl--line-height: var(--leading-2xl);
+	--text-3xl: var(--text-3xl);
+	--text-3xl--line-height: var(--leading-3xl);
+}

@@ -1,0 +1,55 @@
+import type { Rule } from './types';
+
+// Ported verbatim from v1 (index.html's defaultRules()). Order is
+// load-bearing: earlier entries win on substring collision, e.g. 'uber eats'
+// must precede 'uber', 'amazon prime' must precede 'amazon'.
+export function defaultRules(): Rule[] {
+	return [
+		{ keyword: 'spotify', category: 'Subscriptions' },
+		{ keyword: 'netflix', category: 'Subscriptions' },
+		{ keyword: 'hulu', category: 'Subscriptions' },
+		{ keyword: 'disney+', category: 'Subscriptions' },
+		{ keyword: 'amazon prime', category: 'Subscriptions' },
+		{ keyword: 'apple.com/bill', category: 'Subscriptions' },
+		{ keyword: 'icloud', category: 'Subscriptions' },
+		{ keyword: 'whole foods', category: 'Groceries' },
+		{ keyword: 'trader joe', category: 'Groceries' },
+		{ keyword: 'safeway', category: 'Groceries' },
+		{ keyword: 'kroger', category: 'Groceries' },
+		{ keyword: 'giant food', category: 'Groceries' },
+		{ keyword: 'grocery', category: 'Groceries' },
+		{ keyword: 'restaurant', category: 'Dining' },
+		{ keyword: 'coffee', category: 'Dining' },
+		{ keyword: 'starbucks', category: 'Dining' },
+		{ keyword: 'doordash', category: 'Dining' },
+		{ keyword: 'grubhub', category: 'Dining' },
+		{ keyword: 'uber eats', category: 'Dining' },
+		{ keyword: 'uber', category: 'Transport' },
+		{ keyword: 'lyft', category: 'Transport' },
+		{ keyword: 'shell oil', category: 'Transport' },
+		{ keyword: 'exxon', category: 'Transport' },
+		{ keyword: 'chevron', category: 'Transport' },
+		{ keyword: 'parking', category: 'Transport' },
+		{ keyword: 'transit', category: 'Transport' },
+		{ keyword: 'electric', category: 'Utilities' },
+		{ keyword: 'water bill', category: 'Utilities' },
+		{ keyword: 'comcast', category: 'Utilities' },
+		{ keyword: 'verizon', category: 'Utilities' },
+		{ keyword: 'at&t', category: 'Utilities' },
+		{ keyword: 'internet', category: 'Utilities' },
+		{ keyword: 'amazon', category: 'Shopping' },
+		{ keyword: 'target', category: 'Shopping' },
+		{ keyword: 'walmart', category: 'Shopping' },
+		{ keyword: 'pharmacy', category: 'Health' },
+		{ keyword: 'cvs', category: 'Health' },
+		{ keyword: 'walgreens', category: 'Health' },
+		{ keyword: 'gym', category: 'Health' },
+		{ keyword: 'insurance', category: 'Insurance' },
+		{ keyword: 'payroll', category: 'Income' },
+		{ keyword: 'direct dep', category: 'Income' },
+		{ keyword: 'transfer', category: 'Transfer' },
+		{ keyword: 'atm', category: 'Cash' },
+		{ keyword: 'fee', category: 'Fees' },
+		{ keyword: 'interest', category: 'Interest' }
+	];
+}

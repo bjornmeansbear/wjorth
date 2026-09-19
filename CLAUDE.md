@@ -1,42 +1,50 @@
 # Wjorth — Claude Code project context
 
-Read `SPEC.md` for the full functional spec before making changes. This file is
-quick orientation for whichever session picks this up.
+This repo has two tracks — **work in `app/` unless told otherwise.**
 
-## What this is
+- **`app/`** — the active SvelteKit + Tailwind rebuild (v2). Zero-based
+  budgeting, necessity tagging, multi-year view, a local CSV inbox, JSON-file
+  persistence. Has its own `app/CLAUDE.md`-equivalent context in
+  `app/SPEC.md` and `app/README.md` — read those before working in `app/`.
+- **`index.html`** (repo root) — the original single-file vanilla-JS app
+  (v1), **frozen** as a working reference. Don't add features here; it's
+  kept functional but not developed further. Read root `SPEC.md` and
+  `ARCHITECTURE.md` for how it works if you need to reference its algorithms
+  (v2 ported them, with two named bug fixes — see `app/SPEC.md`).
 
-A single-file, client-side personal finance dashboard. Import bank/card CSVs,
-auto-categorize spending, chart it, surface recurring charges worth cutting.
-No backend, no build step, no analytics, no network calls except the three
-pinned CDN assets (fonts, Chart.js, PapaParse).
+## Non-negotiables (apply to both tracks)
 
-## Non-negotiables
+- **Nothing leaves the machine.** No transaction data ever reaches a network
+  call other than pinned CDN/font assets needed to render the page. This is
+  the whole point of the tool (it's financial data). v1 enforces this by
+  being client-side only; v2 enforces it by running its Node server
+  strictly locally (never deployed) even though it does read/write the
+  local filesystem (CSV inbox, `state.json`) — that's still "nothing leaves
+  the machine," just via a local server instead of pure browser code.
+- **v1 stays a single HTML file, vanilla JS, `localStorage`.** Don't add
+  build tooling or frameworks to `index.html` — that's what `app/` is for.
+- **v2 stays local-only.** Don't add a hosted deployment (Cloudflare or
+  otherwise) without an explicit ask and a discussion of what that means for
+  the CSV-inbox/JSON-state approach, which assumes a real local filesystem.
 
-- **Everything client-side.** No transaction data ever leaves the browser —
-  no fetch calls, no telemetry, no server component. This is the whole point
-  of the tool (it's financial data). Don't add a backend without being asked
-  explicitly, and even then, treat it as a major architecture change to flag.
-- **Single HTML file for the app itself.** `index.html` is intentionally
-  self-contained (inline CSS + JS). If this grows enough to split into
-  modules, that's a deliberate refactor to discuss first, not a default.
-- **Storage is `localStorage`**, key `wjorth_v1`. Schema:
-  `{ transactions: [...], rules: [...], accounts: [...] }`. See SPEC.md for
-  the transaction shape.
-- **No frameworks.** Vanilla JS. Keep it that way unless asked to change it.
-
-## Design system (already implemented, keep consistent)
+## v1 design system (index.html — frozen, for reference)
 
 - Ledger/paper aesthetic: warm off-white background, ink-black text, brick
   red for spending, moss green for income, slate blue-teal accent.
 - Type: IBM Plex Sans (UI text) + IBM Plex Mono (all numbers — dates,
-  amounts — with `font-variant-numeric: tabular-nums`).
+  amounts — with `font-variant-numeric: tabular-nums`), hotlinked via
+  Google Fonts.
 - CSS custom properties in `:root`, with a `prefers-color-scheme: dark`
   override block and an explicit `[data-theme="dark"]` block (no theme
-  toggle wired up yet — see "Open items" below).
+  toggle wired up — v2 added one, see `app/SPEC.md`).
 - Mobile-first: KPI grid is 2-col under 640px, 4-col above. Tables scroll
   horizontally rather than break layout.
 
-## Conventions in the code
+v2 (`app/`) uses the shared `~/Code/color-system-and-guidelines/kit.css`
+design system instead (pink accent, warm cream/dark-brown palette, IBM Plex
+Mono self-hosted for numbers only) — see `app/SPEC.md` "Design system".
+
+## v1 conventions in the code (index.html — frozen, for reference)
 
 - No build tooling — open `index.html` directly, or serve it
   (`python3 -m http.server`) if you need `localhost` instead of `file://`.
@@ -48,16 +56,17 @@ pinned CDN assets (fonts, Chart.js, PapaParse).
   first keyword match — rule order matters (newer/user rules are
   `unshift`ed to the front so they win over defaults).
 
-## Open items / known gaps (fair game to pick up)
+v2 ports every one of these functions verbatim into
+`app/src/lib/finance/*.ts` as pure, testable TypeScript — same
+conventions, same invariants, just typed and out of the IIFE.
 
-- No theme toggle UI (CSS is ready, just needs a control that sets
-  `data-theme` on `<html>`).
-- No multi-currency support — everything assumes one currency, formatted
-  as USD.
-- No budget/target overlay on the charts.
-- Recurring-charge detection uses a fairly blunt heuristic (same normalized
-  merchant, amount within 15%, spaced 18–45 days apart). Reasonable to
-  tighten/loosen if it's too noisy or too quiet on real data.
-- If this moves to a repo with real usage, consider whether `localStorage`
-  is still the right store vs. a local file the user can back up/sync
-  themselves — flagged in SPEC.md as a real tradeoff, not decided yet.
+## Open items / known gaps
+
+**v1** (frozen — these are permanently deferred, not TODOs):
+no theme toggle, no multi-currency, no budget overlay, blunt recurring-charge
+heuristic (15% tolerance, 18–45 day spacing), `localStorage`-only persistence.
+All of these are exactly what v2 addresses — see `app/SPEC.md`.
+
+**v2** (`app/` — fair game to pick up): see `app/SPEC.md` "Known gaps /
+deferred" for the current list (cross-institution CSV cleaning, a manual
+upload fallback alongside the inbox folder, a debt-payoff planner).

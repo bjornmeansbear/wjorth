@@ -1,13 +1,36 @@
 # Wjorth
 
-A local, private spending dashboard. Drop in bank/card CSVs, get spend-by-
-category, spend-over-time, and a recurring-charges finder — all client-side,
-nothing leaves your browser.
+A local, private budgeting dashboard. Drop in bank/card CSVs, get
+spend-by-category, spend-over-time, zero-based budgeting, recurring-charge
+detection, and necessity tagging (essential/discretionary/wasteful) — all
+local, nothing leaves your machine.
 
-See `SPEC.md` for how it behaves and `CLAUDE.md` for project conventions if
-you're working on this with Claude Code.
+This repo has two tracks:
+
+- **`app/`** — the active SvelteKit rebuild (v2). This is where development
+  happens now: zero-based budgeting, necessity tagging, multi-year view, a
+  CSV inbox you drop files into instead of a file picker, JSON-file
+  persistence instead of `localStorage`. See [`app/README.md`](app/README.md)
+  and [`app/SPEC.md`](app/SPEC.md).
+- **`index.html`** — the original single-file vanilla-JS app (v1), **frozen**
+  as a working reference/fallback. Still fully functional; not receiving new
+  features. See `SPEC.md` (this folder) and `ARCHITECTURE.md` for how it
+  works.
+
+If you're picking this up fresh: use `app/`, not `index.html`, unless you
+specifically need the zero-dependency single-file version.
 
 ## Run it
+
+**v2 (`app/`, active development):**
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+**v1 (`index.html`, frozen reference):**
 
 No build step, no dependencies to install.
 
@@ -24,23 +47,16 @@ python3 -m http.server 8000
 
 ## Privacy
 
-Everything happens in your browser. Your bank/card data never leaves your
-machine — no server, no accounts, no analytics, no network calls except a
-handful of pinned CDN assets (fonts, Chart.js, PapaParse) needed to render
-the page. Data is stored in `localStorage`, scoped to whatever origin you
-open the page from.
-
-## Push to GitHub
-
-From inside this folder, once you've created an empty repo to push to:
-
-```bash
-git remote add origin <your-empty-repo-url>
-git push -u origin main
-```
+Your bank/card data never leaves your machine — no server, no accounts, no
+analytics. v1 (`index.html`) runs entirely in the browser, storing data in
+`localStorage`; v2 (`app/`) runs a local Node server (needed to scan the
+CSV inbox folder and read/write its JSON state file) but still never makes
+a network call with your data — the only outbound requests either version
+makes are to pinned CDN/font assets needed to render the page.
 
 ## Working on it with Claude Code
 
 Open this folder in Claude Code (or VS Code with the Claude Code extension).
 It reads `CLAUDE.md` automatically for context — architecture, conventions,
-and a list of open items if you want a starting task.
+and a list of open items if you want a starting task. `app/` has its own
+`SPEC.md` for v2-specific conventions.
