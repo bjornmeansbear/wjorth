@@ -15,7 +15,8 @@ function emptyState(): AppState {
 		accounts: [],
 		budgets: [],
 		categoryTags: defaultCategoryTags(),
-		importedFiles: []
+		importedFiles: [],
+		sinkingFunds: {}
 	};
 }
 

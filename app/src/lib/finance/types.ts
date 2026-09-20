@@ -40,6 +40,12 @@ export interface AppState {
 	budgets: Budget[];
 	categoryTags: Record<string, NecessityTag>;
 	importedFiles: ImportedFile[];
+	// category -> annual target for irregular-but-predictable costs (annual
+	// insurance premiums, car maintenance, holiday spending). Presence of an
+	// entry here is what makes a category a "sinking fund" — its suggested
+	// monthly allocation becomes annualTarget/12 until a real Budget row is
+	// set explicitly for a given month, which always wins.
+	sinkingFunds: Record<string, number>;
 }
 
 export const STATE_VERSION = 1;

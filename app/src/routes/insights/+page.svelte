@@ -12,6 +12,20 @@
 		<a href="/" class="btn">← Dashboard</a>
 	</div>
 
+	<details class="panel">
+		<summary class="panel-header cursor-pointer">What do essential / discretionary / wasteful mean?</summary>
+		<div class="panel-body">
+			<p class="mb-0">
+				Every category starts with a sensible default — groceries and utilities are essential,
+				dining out and subscriptions are discretionary, bank fees and interest are wasteful — but
+				these are judgment calls, not facts, and you can override any category's default or any
+				individual transaction. This page rolls up spending by that tag so it's easy to see what's
+				necessary versus what's a choice, and which recurring charges are both optional and adding
+				up.
+			</p>
+		</div>
+	</details>
+
 	<WasteRollup rollup={data.rollup} />
 
 	<div class="panel">
