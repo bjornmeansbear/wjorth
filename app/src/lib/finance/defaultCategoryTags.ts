@@ -25,6 +25,9 @@ export function defaultCategoryTags(): Record<string, NecessityTag> {
 		// alongside saving and spending rather than folding into Shopping.
 		Giving: 'discretionary',
 		Entertainment: 'discretionary',
+		// Kids' lessons/sports/camps — a real, valued choice for the family,
+		// same spirit as Giving, not essential in the survival sense.
+		'Kids Activities': 'discretionary',
 		// Fees and interest are close to definitionally avoidable cost —
 		// exactly what a debt-aware, zero-based budgeter wants surfaced.
 		Fees: 'wasteful',

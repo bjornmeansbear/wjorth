@@ -70,6 +70,8 @@ export function defaultRules(): Rule[] {
 		{ keyword: 'payroll', category: 'Income' },
 		{ keyword: 'direct dep', category: 'Income' },
 		{ keyword: 'transfer', category: 'Transfer' },
+		{ keyword: 'applecard', category: 'Transfer' },
+		{ keyword: 'capital one mobile pmt', category: 'Transfer' },
 		{ keyword: 'atm', category: 'Cash' },
 		{ keyword: 'fee', category: 'Fees' },
 		{ keyword: 'interest', category: 'Interest' }
