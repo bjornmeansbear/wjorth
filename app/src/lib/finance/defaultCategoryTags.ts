@@ -18,6 +18,13 @@ export function defaultCategoryTags(): Record<string, NecessityTag> {
 		Subscriptions: 'discretionary',
 		Dining: 'discretionary',
 		Shopping: 'discretionary',
+		// Split from Shopping on purpose — there's a real baseline clothing
+		// need (especially for a growing kid), unlike general/misc shopping.
+		Clothing: 'essential',
+		// Flights/hotels — distinct from day-to-day Transport (commuting, gas,
+		// car repair). Discretionary by default (leisure travel); override
+		// per-transaction if a specific trip is work-related.
+		Travel: 'discretionary',
 		Cash: 'discretionary',
 		// Not essential in the survival sense, and not wasteful either — a
 		// values-driven choice with real intended impact. Per standard
