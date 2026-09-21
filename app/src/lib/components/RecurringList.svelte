@@ -8,8 +8,8 @@
 	let { groups, categoryTags }: { groups: RecurringGroup[]; categoryTags: Record<string, NecessityTag> } = $props();
 </script>
 
-<div class="panel">
-	<div class="panel-header">Recurring charges</div>
+<details class="panel" open>
+	<summary class="panel-header cursor-pointer">Recurring charges</summary>
 	<div class="panel-body">
 		{#if groups.length === 0}
 			<p class="caption-muted">Nothing recurring detected yet — needs at least two similarly-timed charges.</p>
@@ -38,4 +38,4 @@
 			</table>
 		{/if}
 	</div>
-</div>
+</details>

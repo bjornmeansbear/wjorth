@@ -5,8 +5,8 @@
 	let { merchants }: { merchants: MerchantTotal[] } = $props();
 </script>
 
-<div class="panel">
-	<div class="panel-header">Top merchants</div>
+<details class="panel" open>
+	<summary class="panel-header cursor-pointer">Top merchants</summary>
 	<div class="panel-body">
 		{#if merchants.length === 0}
 			<p class="caption-muted">No outflow in this period.</p>
@@ -21,4 +21,4 @@
 			</ol>
 		{/if}
 	</div>
-</div>
+</details>
