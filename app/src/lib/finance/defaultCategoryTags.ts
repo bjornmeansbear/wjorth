@@ -10,6 +10,7 @@ export function defaultCategoryTags(): Record<string, NecessityTag> {
 		Utilities: 'essential',
 		Health: 'essential',
 		Insurance: 'essential',
+		Housing: 'essential',
 		Subscriptions: 'discretionary',
 		Dining: 'discretionary',
 		Shopping: 'discretionary',
