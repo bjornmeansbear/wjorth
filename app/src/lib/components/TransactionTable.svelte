@@ -102,6 +102,7 @@
 					<th class="pb-2 px-2 cursor-pointer" onclick={() => toggleSort('category')}>Category</th>
 					<th class="pb-2 px-2">Necessity</th>
 					<th class="pb-2 px-2 cursor-pointer text-right" onclick={() => toggleSort('amount')}>Amount</th>
+					<th class="pb-2 px-2" title="One-time capital purchase (a car, an appliance) — excluded from budget-suggestion averages">Major?</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -156,6 +157,17 @@
 						</td>
 						<td class="py-2 px-2 text-right font-mono" class:text-danger={t.flow === 'out'} class:text-success={t.flow === 'in'}>
 							{t.flow === 'out' ? '-' : ''}{fmtMoney(t.amount)}
+						</td>
+						<td class="py-2 px-2 text-center">
+							<form method="POST" action="?/setMajorPurchase" use:enhance>
+								<input type="hidden" name="transactionId" value={t.id} />
+								<input
+									type="checkbox"
+									name="isMajorPurchase"
+									checked={t.isMajorPurchase}
+									onchange={(e) => (e.currentTarget as HTMLInputElement).form?.requestSubmit()}
+								/>
+							</form>
 						</td>
 					</tr>
 				{/each}

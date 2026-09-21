@@ -24,12 +24,22 @@ export const load: PageServerLoad = async ({ url }) => {
 		})
 		.sort((a, b) => b.annual - a.annual);
 
+	// Real category stays visible here on purpose — this is a flag alongside
+	// category, not a replacement bucket, so a car purchase still reads as
+	// Transport, just marked as one-time rather than a recurring cost.
+	const majorPurchases = filtered
+		.filter((t) => t.isMajorPurchase)
+		.sort((a, b) => b.amount - a.amount);
+	const majorPurchasesTotal = majorPurchases.reduce((sum, t) => sum + t.amount, 0);
+
 	return {
 		period,
 		rollup,
 		wasteful: wasteful.slice(0, 20),
 		discretionary: discretionary.slice(0, 20),
 		recurringWaste,
+		majorPurchases,
+		majorPurchasesTotal,
 		categoryTags: state.categoryTags
 	};
 };

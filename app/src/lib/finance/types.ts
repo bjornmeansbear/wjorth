@@ -11,6 +11,14 @@ export interface Transaction {
 	category: string;
 	manual: boolean; // true once a user has hand-edited the category
 	tag: NecessityTag | null; // null = inherit categoryTags[category] default
+	// A one-time capital purchase (a car, a major appliance) marked so it
+	// keeps its real category (Transport, Housing, ...) instead of losing
+	// that context to a generic "Major Purchases" bucket — a flag alongside
+	// category and tag, not a replacement for either. Excluded from the
+	// trailing-average calculation suggestBudget() uses, so a single large
+	// purchase doesn't permanently skew future budget suggestions for that
+	// category; still counts normally in the month it actually happened.
+	isMajorPurchase: boolean;
 }
 
 export interface Rule {

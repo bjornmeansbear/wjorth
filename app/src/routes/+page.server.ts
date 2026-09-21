@@ -99,6 +99,19 @@ export const actions: Actions = {
 		return { updated: true };
 	},
 
+	setMajorPurchase: async ({ request }) => {
+		const form = await request.formData();
+		const transactionId = String(form.get('transactionId') ?? '');
+		const isMajorPurchase = form.get('isMajorPurchase') === 'on';
+		if (!transactionId) return fail(400, { message: 'Missing transactionId' });
+
+		await updateState((state) => {
+			const txn = state.transactions.find((t) => t.id === transactionId);
+			if (txn) txn.isMajorPurchase = isMajorPurchase;
+		});
+		return { updated: true };
+	},
+
 	setCategoryTag: async ({ request }) => {
 		const form = await request.formData();
 		const category = String(form.get('category') ?? '');

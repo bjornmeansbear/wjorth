@@ -139,9 +139,31 @@ function pastMonthsWithData(state: AppState, month: string, maxCount: number): s
 		.slice(0, maxCount);
 }
 
+// Excludes isMajorPurchase transactions — a one-time car/appliance purchase
+// shouldn't permanently inflate the suggested monthly allocation for its
+// category going forward. Real-time actual-vs-budget tracking (actualForCategory,
+// used elsewhere for the current month) still counts everything, since real
+// spending that happened is real; only this trailing-average-for-suggestions
+// path excludes outliers.
+function actualForCategoryExcludingMajorPurchases(state: AppState, month: string, category: string): number {
+	let sum = 0;
+	for (const t of state.transactions) {
+		if (
+			t.flow === 'out' &&
+			t.category === category &&
+			t.category !== 'Transfer' &&
+			monthOf(t.date) === month &&
+			!t.isMajorPurchase
+		) {
+			sum += t.amount;
+		}
+	}
+	return sum;
+}
+
 function averageActual(state: AppState, category: string, months: string[]): number {
 	if (months.length === 0) return 0;
-	const total = months.reduce((sum, m) => sum + actualForCategory(state, m, category), 0);
+	const total = months.reduce((sum, m) => sum + actualForCategoryExcludingMajorPurchases(state, m, category), 0);
 	return total / months.length;
 }
 

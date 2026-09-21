@@ -28,6 +28,41 @@
 
 	<WasteRollup rollup={data.rollup} />
 
+	<details class="panel" open>
+		<summary class="panel-header cursor-pointer">Major purchases — {fmtMoney(data.majorPurchasesTotal)}</summary>
+		<div class="panel-body">
+			<p class="caption-muted mb-4">
+				One-time capital purchases (a car, a major appliance) marked so they don't skew what a
+				"typical month" looks like — they keep their real category below, just flagged as one-off
+				rather than recurring.
+			</p>
+			{#if data.majorPurchases.length === 0}
+				<p class="caption-muted">None marked yet — toggle "Major?" on a transaction in the table to flag one.</p>
+			{:else}
+				<table class="w-full text-sm">
+					<thead>
+						<tr class="label-upper text-left">
+							<th class="pb-2 px-2">Date</th>
+							<th class="pb-2 px-2">Description</th>
+							<th class="pb-2 px-2">Category</th>
+							<th class="pb-2 px-2 text-right">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each data.majorPurchases as t}
+							<tr class="border-t border-border">
+								<td class="py-2 px-2 font-mono whitespace-nowrap text-text-muted">{t.date}</td>
+								<td class="py-2 px-2">{t.description}</td>
+								<td class="py-2 px-2">{t.category}</td>
+								<td class="py-2 px-2 text-right font-mono">{fmtMoney(t.amount)}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			{/if}
+		</div>
+	</details>
+
 	<div class="panel">
 		<div class="panel-header">Recurring charges worth reconsidering</div>
 		<div class="panel-body">
