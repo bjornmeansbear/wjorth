@@ -3,7 +3,7 @@
 	import Chart from 'chart.js/auto';
 	import type { CategoryBucket } from '$lib/finance/charts';
 	import { fmtMoney } from '$lib/finance/amounts';
-	import { readChartTheme, categoryColorMap } from '$lib/finance/chartTheme';
+	import { readChartTheme, stableColorMap } from '$lib/finance/chartTheme';
 
 	// `categories` is the full known category list, used only to build a
 	// STABLE color assignment — not the bars themselves (`data`, which is
@@ -18,7 +18,7 @@
 	function render() {
 		if (!canvas) return;
 		const theme = readChartTheme();
-		const colorMap = categoryColorMap(categories);
+		const colorMap = stableColorMap(categories);
 		const otherColor = theme.textMuted;
 
 		chart?.destroy();

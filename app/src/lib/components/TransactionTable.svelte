@@ -3,18 +3,27 @@
 	import type { Transaction, NecessityTag } from '$lib/finance/types';
 	import { fmtMoney } from '$lib/finance/amounts';
 	import { effectiveTag } from '$lib/finance/tags';
-	import { categoryColorMap } from '$lib/finance/chartTheme';
+	import { stableColorMap } from '$lib/finance/chartTheme';
 	import TagPill from './TagPill.svelte';
 
 	let {
 		transactions,
 		categories,
-		categoryTags
-	}: { transactions: Transaction[]; categories: string[]; categoryTags: Record<string, NecessityTag> } = $props();
+		categoryTags,
+		accounts
+	}: {
+		transactions: Transaction[];
+		categories: string[];
+		categoryTags: Record<string, NecessityTag>;
+		accounts: string[];
+	} = $props();
 
 	// Same stable mapping the category chart uses, so a category's color
-	// means the same thing in both places.
-	let categoryColors = $derived(categoryColorMap(categories));
+	// means the same thing in both places. Accounts get their own
+	// independent map (same function, different input list) so an
+	// account's color never collides with a category's.
+	let categoryColors = $derived(stableColorMap(categories));
+	let accountColors = $derived(stableColorMap(accounts));
 
 	type SortCol = 'date' | 'description' | 'account' | 'category' | 'amount';
 	type PageSize = 50 | 100 | 200 | 500 | 'all';
@@ -100,7 +109,15 @@
 					<tr class="border-t border-border">
 						<td class="py-2 px-2 font-mono whitespace-nowrap text-text-muted">{t.date}</td>
 						<td class="py-2 px-2">{t.description}</td>
-						<td class="py-2 px-2">{t.account}</td>
+						<td class="py-2 px-2 max-w-24">
+							<span class="flex items-center gap-1.5" title={t.account}>
+								<span
+									class="inline-block w-2.5 h-2.5 shrink-0 rounded-full"
+									style="background-color: {accountColors[t.account] ?? 'transparent'}"
+								></span>
+								<span class="truncate">{t.account}</span>
+							</span>
+						</td>
 						<td class="py-2 px-2">
 							<form method="POST" action="?/editCategory" use:enhance class="flex items-center gap-2">
 								<input type="hidden" name="transactionId" value={t.id} />

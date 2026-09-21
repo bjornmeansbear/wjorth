@@ -30,16 +30,24 @@ export function readChartTheme(): ChartTheme {
 	};
 }
 
-// A small distinct-hue rotation for category bars, chosen from steps that
-// hold up per RULES.md's tint-budget/distinctness notes (avoiding purple,
-// which reads pink at pale steps, and blue, which is a desaturated teal-gray
-// not meant to carry meaning).
+// A wide distinct-hue rotation for category bars/swatches — 12 of the kit's
+// 14 hue families, mostly at step 5-6 for legibility. Deliberately excludes
+// two: --blue-* (per RULES.md, a desaturated teal-gray "not meant to carry
+// meaning," not a real hue to assign) and --red-*, which would collide with
+// --color-danger's meaning elsewhere in this app (budget overspend) if a
+// category happened to land on it. Purple uses step 5 rather than the pale
+// 0-2 steps RULES.md flags as reading pink; every other step is the "most
+// visibly [hue]" pick noted in RULES.md "Data on screen"/tint-budget notes
+// where one exists (e.g. green-5 over green-6, which reads brown).
 export function categoryPalette(): string[] {
 	return [
 		readToken('--pink-5'),
+		readToken('--orange-5'),
 		readToken('--goldenrod-5'),
+		readToken('--yellow-6'),
 		readToken('--green-5'),
 		readToken('--cornflower-5'),
+		readToken('--purple-5'),
 		readToken('--brown-5'),
 		readToken('--purple-gray-5'),
 		readToken('--dark-gray-5'),
@@ -48,18 +56,21 @@ export function categoryPalette(): string[] {
 	];
 }
 
-// A STABLE category -> color mapping, so the same category always gets the
-// same color everywhere (the category chart, the transaction table, ...).
-// Assigned by alphabetical position over the full known category list, not
-// by spend rank within one chart's current period — rank-based assignment
-// (as the chart used before) reassigns colors every time the top-8 ranking
-// shifts, which defeats the point of a legend a reader can learn once.
-export function categoryColorMap(categories: string[]): Record<string, string> {
+// A STABLE name -> color mapping, so the same value always gets the same
+// color everywhere it's shown. Assigned by alphabetical position over the
+// full known list, not by rank within one chart's current period — rank-
+// based assignment (as the category chart used before) reassigns colors
+// every time the top-8 ranking shifts, which defeats the point of a legend
+// a reader can learn once. Generic over any string list — used for both
+// categories (chart bars, transaction-table swatches) and accounts
+// (transaction-table swatches), each building its own independent map so a
+// category's color never collides with an account's.
+export function stableColorMap(items: string[]): Record<string, string> {
 	const palette = categoryPalette();
-	const sorted = [...new Set(categories)].sort();
+	const sorted = [...new Set(items)].sort();
 	const map: Record<string, string> = {};
-	sorted.forEach((cat, i) => {
-		map[cat] = palette[i % palette.length];
+	sorted.forEach((item, i) => {
+		map[item] = palette[i % palette.length];
 	});
 	return map;
 }

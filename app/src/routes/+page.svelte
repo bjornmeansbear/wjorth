@@ -48,6 +48,7 @@
 		transactions={data.state.transactions}
 		categories={data.categories}
 		categoryTags={data.state.categoryTags}
+		accounts={data.state.accounts}
 	/>
 
 	<div class="grid tablet:grid-cols-2 gap-4">
