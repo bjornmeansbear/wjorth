@@ -14,6 +14,12 @@ export function defaultCategoryTags(): Record<string, NecessityTag> {
 		Dining: 'discretionary',
 		Shopping: 'discretionary',
 		Cash: 'discretionary',
+		// Not essential in the survival sense, and not wasteful either — a
+		// values-driven choice with real intended impact. Per standard
+		// zero-based budgeting methodology, giving gets its own bucket
+		// alongside saving and spending rather than folding into Shopping.
+		Giving: 'discretionary',
+		Entertainment: 'discretionary',
 		// Fees and interest are close to definitionally avoidable cost —
 		// exactly what a debt-aware, zero-based budgeter wants surfaced.
 		Fees: 'wasteful',
