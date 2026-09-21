@@ -3,9 +3,14 @@
 	import Chart from 'chart.js/auto';
 	import type { CategoryBucket } from '$lib/finance/charts';
 	import { fmtMoney } from '$lib/finance/amounts';
-	import { readChartTheme, categoryPalette } from '$lib/finance/chartTheme';
+	import { readChartTheme, categoryColorMap } from '$lib/finance/chartTheme';
 
-	let { data }: { data: CategoryBucket[] } = $props();
+	// `categories` is the full known category list, used only to build a
+	// STABLE color assignment — not the bars themselves (`data`, which is
+	// already bucketed to top-8 + Other for the current period). Colors are
+	// keyed by category name so they match the transaction table regardless
+	// of how the current period's top-8 ranking shifts.
+	let { data, categories }: { data: CategoryBucket[]; categories: string[] } = $props();
 
 	let canvas = $state<HTMLCanvasElement>();
 	let chart: Chart | undefined;
@@ -13,7 +18,8 @@
 	function render() {
 		if (!canvas) return;
 		const theme = readChartTheme();
-		const palette = categoryPalette();
+		const colorMap = categoryColorMap(categories);
+		const otherColor = theme.textMuted;
 
 		chart?.destroy();
 		chart = new Chart(canvas, {
@@ -23,7 +29,7 @@
 				datasets: [
 					{
 						data: data.map((d) => d.amount),
-						backgroundColor: data.map((_, i) => palette[i % palette.length])
+						backgroundColor: data.map((d) => (d.category === 'Other' ? otherColor : colorMap[d.category]))
 					}
 				]
 			},

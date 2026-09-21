@@ -3,6 +3,7 @@
 	import type { Transaction, NecessityTag } from '$lib/finance/types';
 	import { fmtMoney } from '$lib/finance/amounts';
 	import { effectiveTag } from '$lib/finance/tags';
+	import { categoryColorMap } from '$lib/finance/chartTheme';
 	import TagPill from './TagPill.svelte';
 
 	let {
@@ -10,6 +11,10 @@
 		categories,
 		categoryTags
 	}: { transactions: Transaction[]; categories: string[]; categoryTags: Record<string, NecessityTag> } = $props();
+
+	// Same stable mapping the category chart uses, so a category's color
+	// means the same thing in both places.
+	let categoryColors = $derived(categoryColorMap(categories));
 
 	type SortCol = 'date' | 'description' | 'account' | 'category' | 'amount';
 	type PageSize = 50 | 100 | 200 | 500 | 'all';
@@ -68,8 +73,8 @@
 	<div class="panel-header flex flex-wrap gap-4 items-center justify-between">
 		<span>Transactions</span>
 		<div class="flex gap-2">
-			<input class="btn" type="search" placeholder="Search description…" bind:value={search} />
-			<select class="btn" bind:value={categoryFilter}>
+			<input class="field" type="search" placeholder="Search description…" bind:value={search} />
+			<select class="field" bind:value={categoryFilter}>
 				<option value="">All categories</option>
 				{#each categories as c}
 					<option value={c}>{c}</option>
@@ -77,30 +82,36 @@
 			</select>
 		</div>
 	</div>
-	<div class="panel-body overflow-x-auto">
+	<div class="panel-body">
+		<div class="-mx-5 overflow-x-auto">
 		<table class="w-full text-sm">
 			<thead>
 				<tr class="label-upper text-left">
-					<th class="pb-2 cursor-pointer" onclick={() => toggleSort('date')}>Date</th>
-					<th class="pb-2 cursor-pointer" onclick={() => toggleSort('description')}>Description</th>
-					<th class="pb-2 cursor-pointer" onclick={() => toggleSort('account')}>Account</th>
-					<th class="pb-2 cursor-pointer" onclick={() => toggleSort('category')}>Category</th>
-					<th class="pb-2">Necessity</th>
-					<th class="pb-2 cursor-pointer text-right" onclick={() => toggleSort('amount')}>Amount</th>
+					<th class="pb-2 px-2 cursor-pointer" onclick={() => toggleSort('date')}>Date</th>
+					<th class="pb-2 px-2 cursor-pointer" onclick={() => toggleSort('description')}>Description</th>
+					<th class="pb-2 px-2 cursor-pointer" onclick={() => toggleSort('account')}>Account</th>
+					<th class="pb-2 px-2 cursor-pointer" onclick={() => toggleSort('category')}>Category</th>
+					<th class="pb-2 px-2">Necessity</th>
+					<th class="pb-2 px-2 cursor-pointer text-right" onclick={() => toggleSort('amount')}>Amount</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each visible as t (t.id)}
 					<tr class="border-t border-border">
-						<td class="py-2 font-mono whitespace-nowrap">{t.date}</td>
-						<td class="py-2">{t.description}</td>
-						<td class="py-2">{t.account}</td>
-						<td class="py-2">
-							<form method="POST" action="?/editCategory" use:enhance>
+						<td class="py-2 px-2 font-mono whitespace-nowrap text-text-muted">{t.date}</td>
+						<td class="py-2 px-2">{t.description}</td>
+						<td class="py-2 px-2">{t.account}</td>
+						<td class="py-2 px-2">
+							<form method="POST" action="?/editCategory" use:enhance class="flex items-center gap-2">
 								<input type="hidden" name="transactionId" value={t.id} />
+								<span
+									class="inline-block w-2.5 h-2.5 shrink-0 rounded-full"
+									style="background-color: {categoryColors[t.category] ?? 'transparent'}"
+									title={t.category}
+								></span>
 								<select
 									name="category"
-									class="btn"
+									class="field w-40"
 									value={t.category}
 									onchange={(e) => (e.currentTarget as HTMLSelectElement).form?.requestSubmit()}
 								>
@@ -110,12 +121,12 @@
 								</select>
 							</form>
 						</td>
-						<td class="py-2">
+						<td class="py-2 px-2">
 							<form method="POST" action="?/setTransactionTag" use:enhance>
 								<input type="hidden" name="transactionId" value={t.id} />
 								<select
 									name="tag"
-									class="btn"
+									class="field w-40"
 									value={t.tag ?? ''}
 									onchange={(e) => (e.currentTarget as HTMLSelectElement).form?.requestSubmit()}
 								>
@@ -126,13 +137,14 @@
 								</select>
 							</form>
 						</td>
-						<td class="py-2 text-right font-mono" class:text-danger={t.flow === 'out'} class:text-success={t.flow === 'in'}>
+						<td class="py-2 px-2 text-right font-mono" class:text-danger={t.flow === 'out'} class:text-success={t.flow === 'in'}>
 							{t.flow === 'out' ? '-' : ''}{fmtMoney(t.amount)}
 						</td>
 					</tr>
 				{/each}
 			</tbody>
 		</table>
+		</div>
 		<div class="flex flex-wrap items-center justify-between gap-4 mt-4">
 			<p class="caption-muted">
 				Showing {visible.length} of {filtered.length} transactions
@@ -141,7 +153,7 @@
 			<div class="flex items-center gap-2">
 				<label class="caption-muted flex items-center gap-1">
 					Show
-					<select class="btn" bind:value={pageSize}>
+					<select class="field" bind:value={pageSize}>
 						<option value={50}>50</option>
 						<option value={100}>100</option>
 						<option value={200}>200</option>

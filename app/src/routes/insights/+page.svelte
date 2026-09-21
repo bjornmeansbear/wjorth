@@ -41,15 +41,15 @@
 				<table class="w-full text-sm">
 					<thead>
 						<tr class="label-upper text-left">
-							<th class="pb-2">Merchant</th>
-							<th class="pb-2 text-right">Annual cost</th>
+							<th class="pb-2 px-2">Merchant</th>
+							<th class="pb-2 px-2 text-right">Annual cost</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each data.recurringWaste as g}
 							<tr class="border-t border-border">
-								<td class="py-2">{g.merchant}</td>
-								<td class="py-2 text-right font-mono font-bold text-danger">{fmtMoney(g.annual)}</td>
+								<td class="py-2 px-2">{g.merchant}</td>
+								<td class="py-2 px-2 text-right font-mono font-bold text-danger">{fmtMoney(g.annual)}</td>
 							</tr>
 						{/each}
 					</tbody>

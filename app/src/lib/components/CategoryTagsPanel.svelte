@@ -16,7 +16,7 @@
 						<input type="hidden" name="category" value={category} />
 						<select
 							name="tag"
-							class="btn"
+							class="field"
 							value={tag}
 							onchange={(e) => (e.currentTarget as HTMLSelectElement).form?.requestSubmit()}
 						>

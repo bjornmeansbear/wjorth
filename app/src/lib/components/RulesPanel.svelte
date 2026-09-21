@@ -12,8 +12,8 @@
 	<summary class="panel-header cursor-pointer">Rules ({rules.length})</summary>
 	<div class="panel-body">
 		<form method="POST" action="?/addRule" use:enhance class="flex gap-2 mb-4 flex-wrap">
-			<input class="btn" name="keyword" placeholder="keyword" bind:value={newKeyword} required />
-			<input class="btn" name="category" placeholder="category" bind:value={newCategory} required />
+			<input class="field" name="keyword" placeholder="keyword" bind:value={newKeyword} required />
+			<input class="field" name="category" placeholder="category" bind:value={newCategory} required />
 			<button type="submit" class="btn btn-accent">Add rule</button>
 		</form>
 

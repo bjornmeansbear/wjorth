@@ -17,19 +17,19 @@
 			<table class="w-full text-sm">
 				<thead>
 					<tr class="label-upper text-left">
-						<th class="pb-2">Merchant</th>
-						<th class="pb-2">Avg</th>
-						<th class="pb-2">Annual</th>
-						<th class="pb-2">Necessity</th>
+						<th class="pb-2 px-2">Merchant</th>
+						<th class="pb-2 px-2">Avg</th>
+						<th class="pb-2 px-2">Annual</th>
+						<th class="pb-2 px-2">Necessity</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each groups as g}
 						<tr class="border-t border-border">
-							<td class="py-2">{g.merchant}</td>
-							<td class="py-2 font-mono">{fmtMoney(g.avg)}</td>
-							<td class="py-2 font-mono font-bold">{fmtMoney(g.annual)}</td>
-							<td class="py-2">
+							<td class="py-2 px-2">{g.merchant}</td>
+							<td class="py-2 px-2 font-mono">{fmtMoney(g.avg)}</td>
+							<td class="py-2 px-2 font-mono font-bold">{fmtMoney(g.annual)}</td>
+							<td class="py-2 px-2">
 								<TagPill tag={effectiveTag(g.transactions[0], categoryTags)} />
 							</td>
 						</tr>

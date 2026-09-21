@@ -15,7 +15,7 @@
 	let { data }: PageProps = $props();
 </script>
 
-<div class="max-w-5xl mx-auto p-6 space-y-6">
+<div class="w-full px-6 py-6 space-y-6">
 	<div class="flex flex-wrap justify-between items-center gap-4">
 		<h1>Wjorth</h1>
 		<div class="flex gap-2 items-center">
@@ -35,7 +35,7 @@
 	<KpiRow kpis={data.kpis} />
 
 	<div class="grid tablet:grid-cols-2 gap-4">
-		<CategoryChart data={data.categoryChart} />
+		<CategoryChart data={data.categoryChart} categories={data.categories} />
 		<TimeChart data={data.timeChart} />
 	</div>
 

@@ -21,11 +21,11 @@
 		<form method="POST" action="?/setSinkingFund" use:enhance class="flex gap-2 mb-4 flex-wrap items-end">
 			<label class="text-sm">
 				Category
-				<input class="btn" name="category" bind:value={newCategory} required />
+				<input class="field" name="category" bind:value={newCategory} required />
 			</label>
 			<label class="text-sm">
 				Annual target
-				<input class="btn w-32" type="number" step="1" name="annualTarget" bind:value={newAnnual} required />
+				<input class="field w-32" type="number" step="1" name="annualTarget" bind:value={newAnnual} required />
 			</label>
 			<button type="submit" class="btn btn-accent">Save</button>
 		</form>

@@ -36,23 +36,23 @@
 				<div class="grid grid-cols-2 tablet:grid-cols-4 gap-4 mb-4">
 					<label class="text-sm">
 						Account name
-						<input class="btn w-full" name="acct" bind:value={acct} />
+						<input class="field w-full" name="acct" bind:value={acct} />
 					</label>
 					<label class="text-sm">
 						Date column
-						<select class="btn w-full" name="dateCol" bind:value={dateCol}>
+						<select class="field w-full" name="dateCol" bind:value={dateCol}>
 							{#each file.headers as h}<option value={h}>{h}</option>{/each}
 						</select>
 					</label>
 					<label class="text-sm">
 						Description column
-						<select class="btn w-full" name="descCol" bind:value={descCol}>
+						<select class="field w-full" name="descCol" bind:value={descCol}>
 							{#each file.headers as h}<option value={h}>{h}</option>{/each}
 						</select>
 					</label>
 					<label class="text-sm">
 						Mode
-						<select class="btn w-full" name="mode" bind:value={mode}>
+						<select class="field w-full" name="mode" bind:value={mode}>
 							<option value="single">Single amount column</option>
 							<option value="split">Separate debit/credit</option>
 						</select>
@@ -60,7 +60,7 @@
 					{#if mode === 'single'}
 						<label class="text-sm">
 							Amount column
-							<select class="btn w-full" name="amountCol" bind:value={amountCol}>
+							<select class="field w-full" name="amountCol" bind:value={amountCol}>
 								{#each file.headers as h}<option value={h}>{h}</option>{/each}
 							</select>
 						</label>
@@ -71,13 +71,13 @@
 					{:else}
 						<label class="text-sm">
 							Debit column
-							<select class="btn w-full" name="debitCol" bind:value={debitCol}>
+							<select class="field w-full" name="debitCol" bind:value={debitCol}>
 								{#each file.headers as h}<option value={h}>{h}</option>{/each}
 							</select>
 						</label>
 						<label class="text-sm">
 							Credit column
-							<select class="btn w-full" name="creditCol" bind:value={creditCol}>
+							<select class="field w-full" name="creditCol" bind:value={creditCol}>
 								{#each file.headers as h}<option value={h}>{h}</option>{/each}
 							</select>
 						</label>

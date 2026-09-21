@@ -9,7 +9,7 @@
 	}
 </script>
 
-<select value={period} onchange={onChange} class="btn">
+<select value={period} onchange={onChange} class="field">
 	<option value="all">All time</option>
 	<option value="month">This month</option>
 	<option value="3m">Last 3 months</option>

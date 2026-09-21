@@ -47,3 +47,19 @@ export function categoryPalette(): string[] {
 		readToken('--gray-5')
 	];
 }
+
+// A STABLE category -> color mapping, so the same category always gets the
+// same color everywhere (the category chart, the transaction table, ...).
+// Assigned by alphabetical position over the full known category list, not
+// by spend rank within one chart's current period — rank-based assignment
+// (as the chart used before) reassigns colors every time the top-8 ranking
+// shifts, which defeats the point of a legend a reader can learn once.
+export function categoryColorMap(categories: string[]): Record<string, string> {
+	const palette = categoryPalette();
+	const sorted = [...new Set(categories)].sort();
+	const map: Record<string, string> = {};
+	sorted.forEach((cat, i) => {
+		map[cat] = palette[i % palette.length];
+	});
+	return map;
+}
