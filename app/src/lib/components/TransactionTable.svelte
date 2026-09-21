@@ -12,12 +12,14 @@
 	}: { transactions: Transaction[]; categories: string[]; categoryTags: Record<string, NecessityTag> } = $props();
 
 	type SortCol = 'date' | 'description' | 'account' | 'category' | 'amount';
+	type PageSize = 50 | 100 | 200 | 500 | 'all';
+
 	let sortCol = $state<SortCol>('date');
 	let sortDir = $state<'asc' | 'desc'>('desc');
 	let search = $state('');
 	let categoryFilter = $state('');
-
-	const MAX_ROWS = 200;
+	let pageSize = $state<PageSize>(100);
+	let page = $state(0);
 
 	let filtered = $derived(
 		transactions
@@ -35,7 +37,22 @@
 			})
 	);
 
-	let visible = $derived(filtered.slice(0, MAX_ROWS));
+	let effectivePageSize = $derived(pageSize === 'all' ? Math.max(filtered.length, 1) : pageSize);
+	let totalPages = $derived(Math.max(1, Math.ceil(filtered.length / effectivePageSize)));
+
+	// Reset to page 1 whenever the underlying result set changes shape —
+	// otherwise a filter/search/page-size change can strand you on a now-empty
+	// page 5 of a 2-page result.
+	$effect(() => {
+		search;
+		categoryFilter;
+		sortCol;
+		sortDir;
+		pageSize;
+		page = 0;
+	});
+
+	let visible = $derived(filtered.slice(page * effectivePageSize, (page + 1) * effectivePageSize));
 
 	function toggleSort(col: SortCol) {
 		if (sortCol === col) {
@@ -116,10 +133,25 @@
 				{/each}
 			</tbody>
 		</table>
-		<p class="caption-muted mt-4">
-			Showing {visible.length} of {filtered.length} transactions{filtered.length > MAX_ROWS
-				? ' — narrow with search or filter to see more.'
-				: '.'}
-		</p>
+		<div class="flex flex-wrap items-center justify-between gap-4 mt-4">
+			<p class="caption-muted">
+				Showing {visible.length} of {filtered.length} transactions
+				{#if totalPages > 1}(page {page + 1} of {totalPages}){/if}
+			</p>
+			<div class="flex items-center gap-2">
+				<label class="caption-muted flex items-center gap-1">
+					Show
+					<select class="btn" bind:value={pageSize}>
+						<option value={50}>50</option>
+						<option value={100}>100</option>
+						<option value={200}>200</option>
+						<option value={500}>500</option>
+						<option value="all">All</option>
+					</select>
+				</label>
+				<button type="button" class="btn" disabled={page === 0} onclick={() => (page -= 1)}>‹ Prev</button>
+				<button type="button" class="btn" disabled={page >= totalPages - 1} onclick={() => (page += 1)}>Next ›</button>
+			</div>
+		</div>
 	</div>
 </div>
