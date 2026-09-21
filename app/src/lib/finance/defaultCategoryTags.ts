@@ -11,6 +11,10 @@ export function defaultCategoryTags(): Record<string, NecessityTag> {
 		Health: 'essential',
 		Insurance: 'essential',
 		Housing: 'essential',
+		// Separate from Housing (the fixed mortgage/rent line) on purpose —
+		// repair/contractor costs are irregular and lumpy, a natural fit for
+		// a sinking fund, unlike the predictable monthly mortgage payment.
+		'Home Maintenance': 'essential',
 		Subscriptions: 'discretionary',
 		Dining: 'discretionary',
 		Shopping: 'discretionary',
