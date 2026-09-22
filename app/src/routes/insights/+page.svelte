@@ -63,6 +63,66 @@
 		</div>
 	</details>
 
+	<details class="panel" open>
+		<summary class="panel-header cursor-pointer">Credit card interest & fees — {fmtMoney(data.ccCostsTotal)}</summary>
+		<div class="panel-body space-y-6">
+			<p class="caption-muted mb-0">
+				The real, avoidable cost of carrying a balance — not the payments you make toward
+				principal, just what the card companies charge you to do it. Only covers cards you've
+				actually imported a statement for; a payment showing up as a Transfer to a card with no
+				imported CSV of its own means its interest isn't captured here yet.
+			</p>
+			{#if data.ccCostsByAccount.length === 0}
+				<p class="caption-muted">No interest or fees in the selected period.</p>
+			{:else}
+				<table class="w-full text-sm">
+					<thead>
+						<tr class="label-upper text-left">
+							<th class="pb-2 px-2">Account</th>
+							<th class="pb-2 px-2 text-right">Interest</th>
+							<th class="pb-2 px-2 text-right">Fees</th>
+							<th class="pb-2 px-2 text-right">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each data.ccCostsByAccount as row}
+							<tr class="border-t border-border">
+								<td class="py-2 px-2">{row.account}</td>
+								<td class="py-2 px-2 text-right font-mono">{fmtMoney(row.interest)}</td>
+								<td class="py-2 px-2 text-right font-mono">{fmtMoney(row.fees)}</td>
+								<td class="py-2 px-2 text-right font-mono font-bold text-danger">{fmtMoney(row.total)}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			{/if}
+
+			<div>
+				<div class="label-upper mb-2">Last 6 months (full history, regardless of period above)</div>
+				<table class="w-full text-sm">
+					<thead>
+						<tr class="label-upper text-left">
+							<th class="pb-2 px-2">Month</th>
+							<th class="pb-2 px-2 text-right">Interest</th>
+							<th class="pb-2 px-2 text-right">Fees</th>
+							<th class="pb-2 px-2 text-right">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each data.ccMonthlyTrend as row}
+							<tr class="border-t border-border">
+								<td class="py-2 px-2 font-mono">{row.month}</td>
+								<td class="py-2 px-2 text-right font-mono">{fmtMoney(row.interest)}</td>
+								<td class="py-2 px-2 text-right font-mono">{fmtMoney(row.fees)}</td>
+								<td class="py-2 px-2 text-right font-mono font-bold">{fmtMoney(row.total)}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</details>
+
 	<div class="panel">
 		<div class="panel-header">Recurring charges worth reconsidering</div>
 		<div class="panel-body">

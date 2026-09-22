@@ -32,6 +32,41 @@ export const load: PageServerLoad = async ({ url }) => {
 		.sort((a, b) => b.amount - a.amount);
 	const majorPurchasesTotal = majorPurchases.reduce((sum, t) => sum + t.amount, 0);
 
+	// Interest + Fees: the real, avoidable cost of carrying a card balance.
+	// Broken out per account within the selected period (so you know which
+	// card to call first), plus a trend over the last 6 calendar months of
+	// full history (ignoring the period filter, like recurringWaste below)
+	// since the trend itself — is it getting worse? — is the point.
+	const ccByAccount = new Map<string, { interest: number; fees: number }>();
+	for (const t of filtered) {
+		if (t.flow !== 'out') continue;
+		if (t.category !== 'Interest' && t.category !== 'Fees') continue;
+		const entry = ccByAccount.get(t.account) ?? { interest: 0, fees: 0 };
+		if (t.category === 'Interest') entry.interest += t.amount;
+		else entry.fees += t.amount;
+		ccByAccount.set(t.account, entry);
+	}
+	const ccCostsByAccount = Array.from(ccByAccount, ([account, v]) => ({
+		account,
+		...v,
+		total: v.interest + v.fees
+	})).sort((a, b) => b.total - a.total);
+	const ccCostsTotal = ccCostsByAccount.reduce((sum, r) => sum + r.total, 0);
+
+	const ccMonths = Array.from(new Set(state.transactions.map((t) => t.date.slice(0, 7))))
+		.sort()
+		.slice(-6);
+	const ccMonthlyTrend = ccMonths.map((month) => {
+		let interest = 0;
+		let fees = 0;
+		for (const t of state.transactions) {
+			if (t.flow !== 'out' || t.date.slice(0, 7) !== month) continue;
+			if (t.category === 'Interest') interest += t.amount;
+			else if (t.category === 'Fees') fees += t.amount;
+		}
+		return { month, interest, fees, total: interest + fees };
+	});
+
 	return {
 		period,
 		rollup,
@@ -40,6 +75,9 @@ export const load: PageServerLoad = async ({ url }) => {
 		recurringWaste,
 		majorPurchases,
 		majorPurchasesTotal,
+		ccCostsByAccount,
+		ccCostsTotal,
+		ccMonthlyTrend,
 		categoryTags: state.categoryTags
 	};
 };

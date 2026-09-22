@@ -73,7 +73,11 @@ function emptyState(): AppState {
 async function readState(): Promise<AppState> {
 	try {
 		const raw = await readFile(STATE_PATH, 'utf-8');
-		return JSON.parse(raw) as AppState;
+		const state = JSON.parse(raw) as AppState;
+		// Backfill fields added after this state.json was first written —
+		// existing files on disk predate them and have no migration step.
+		state.sinkingFunds ??= {};
+		return state;
 	} catch (err) {
 		if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
 			const fresh = emptyState();
