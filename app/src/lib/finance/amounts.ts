@@ -21,3 +21,10 @@ export function fmtMoney(n: number): string {
 	const s = '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 	return neg ? '-' + s : s;
 }
+
+// Projections (payoff dates, future interest) are estimates — cents would be
+// false precision, so they round to whole dollars.
+export function fmtMoneyWhole(n: number): string {
+	const s = '$' + Math.round(Math.abs(n)).toLocaleString('en-US');
+	return n < 0 ? '-' + s : s;
+}

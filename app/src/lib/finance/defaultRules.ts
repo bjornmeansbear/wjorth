@@ -52,6 +52,10 @@ export function defaultRules(): Rule[] {
 		{ keyword: 'at&t', category: 'Utilities' },
 		{ keyword: 't-mobile', category: 'Utilities' },
 		{ keyword: 'xfinity mobile', category: 'Utilities' },
+		// Must precede 'internet' — Apple Card's payment rows read "ACH DEPOSIT
+		// INTERNET TRANSFER FROM ACCOUNT ENDING IN ...", which would otherwise
+		// land in Utilities and count as income.
+		{ keyword: 'internet transfer', category: 'Transfer' },
 		{ keyword: 'internet', category: 'Utilities' },
 		{ keyword: 'amazon', category: 'Shopping' },
 		{ keyword: 'target', category: 'Shopping' },

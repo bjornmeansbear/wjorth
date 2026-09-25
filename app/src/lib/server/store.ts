@@ -66,7 +66,10 @@ function emptyState(): AppState {
 		budgets: [],
 		categoryTags: defaultCategoryTags(),
 		importedFiles: [],
-		sinkingFunds: {}
+		sinkingFunds: {},
+		wjerkMerchants: [],
+		debts: [],
+		payoff: { monthly: null, strategy: 'avalanche' }
 	};
 }
 
@@ -77,6 +80,10 @@ async function readState(): Promise<AppState> {
 		// Backfill fields added after this state.json was first written —
 		// existing files on disk predate them and have no migration step.
 		state.sinkingFunds ??= {};
+		state.wjerkMerchants ??= [];
+		state.debts ??= [];
+		state.payoff ??= { monthly: null, strategy: 'avalanche' };
+		for (const t of state.transactions) t.wjerk ??= null;
 		return state;
 	} catch (err) {
 		if ((err as NodeJS.ErrnoException).code === 'ENOENT') {

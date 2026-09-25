@@ -9,6 +9,7 @@
 	import TransactionTable from '$lib/components/TransactionTable.svelte';
 	import RulesPanel from '$lib/components/RulesPanel.svelte';
 	import CategoryTagsPanel from '$lib/components/CategoryTagsPanel.svelte';
+	import WjerkPanel from '$lib/components/WjerkPanel.svelte';
 	import InboxImportCard from '$lib/components/InboxImportCard.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
@@ -21,6 +22,7 @@
 		<div class="flex gap-2 items-center">
 			<a href="/budget" class="btn">Budget</a>
 			<a href="/insights" class="btn">Insights</a>
+			<a href="/payoff" class="btn">Payoff</a>
 			<a href="/export" class="btn">Export CSV</a>
 			<ThemeToggle />
 		</div>
@@ -49,10 +51,12 @@
 		categories={data.categories}
 		categoryTags={data.state.categoryTags}
 		accounts={data.state.accounts}
+		wjerkMerchants={data.state.wjerkMerchants}
 	/>
 
 	<div class="grid tablet:grid-cols-2 gap-4">
 		<RulesPanel rules={data.state.rules} categories={data.categories} />
 		<CategoryTagsPanel categoryTags={data.state.categoryTags} />
+		<WjerkPanel merchants={data.state.wjerkMerchants} years={data.wjerkYears} />
 	</div>
 </div>

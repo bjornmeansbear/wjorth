@@ -54,7 +54,9 @@
 								<td class="py-2 px-2 font-mono whitespace-nowrap text-text-muted">{t.date}</td>
 								<td class="py-2 px-2">{t.description}</td>
 								<td class="py-2 px-2">{t.category}</td>
-								<td class="py-2 px-2 text-right font-mono">{fmtMoney(t.amount)}</td>
+								<td class="py-2 px-2 text-right font-mono" class:text-success={t.flow === 'in'}>
+									{t.flow === 'in' ? '+' : ''}{fmtMoney(t.amount)}
+								</td>
 							</tr>
 						{/each}
 					</tbody>

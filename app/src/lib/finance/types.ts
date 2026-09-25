@@ -19,6 +19,12 @@ export interface Transaction {
 	// purchase doesn't permanently skew future budget suggestions for that
 	// category; still counts normally in the month it actually happened.
 	isMajorPurchase: boolean;
+	// Wjerk = the user's business. Marks a deductible business expense (or
+	// business income) for the accountant export — another flag alongside
+	// category, same "real category stays visible" reasoning as
+	// isMajorPurchase. null = inherit from state.wjerkMerchants, mirroring
+	// how `tag` inherits from categoryTags.
+	wjerk: boolean | null;
 }
 
 export interface Rule {
@@ -30,6 +36,21 @@ export interface Budget {
 	month: string; // "YYYY-MM"
 	category: string;
 	allocated: number;
+}
+
+// A balance being paid down on /payoff. Typed in from a statement — CSVs
+// carry transactions, not balances, so this can't be derived.
+export interface Debt {
+	id: string;
+	name: string;
+	account: string | null; // imported account this is, if any — links to its interest history
+	balance: number;
+	apr: number; // percent, e.g. 27.99
+	minPayment: number;
+	// Intro rate (a balance-transfer card). promoApr applies for the first
+	// promoMonths months of the simulation, then apr. null = no promo.
+	promoApr: number | null;
+	promoMonths: number;
 }
 
 export interface ImportedFile {
@@ -54,6 +75,15 @@ export interface AppState {
 	// monthly allocation becomes annualTarget/12 until a real Budget row is
 	// set explicitly for a given month, which always wins.
 	sinkingFunds: Record<string, number>;
+	// Lowercase substring keywords (same matching as Rules) whose
+	// transactions default to Wjerk. Any substring match counts — unlike
+	// Rules, order doesn't matter since there's only one outcome.
+	wjerkMerchants: string[];
+	debts: Debt[];
+	// What the user commits to paying toward all debts each month, and how
+	// the extra above minimums is aimed. null = not set yet (the page
+	// suggests recent actual payments).
+	payoff: { monthly: number | null; strategy: 'avalanche' | 'snowball' };
 }
 
 export const STATE_VERSION = 1;

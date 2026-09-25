@@ -3,6 +3,7 @@
 	import type { Transaction, NecessityTag } from '$lib/finance/types';
 	import { fmtMoney } from '$lib/finance/amounts';
 	import { effectiveTag } from '$lib/finance/tags';
+	import { isWjerk } from '$lib/finance/wjerk';
 	import { stableColorMap } from '$lib/finance/chartTheme';
 	import TagPill from './TagPill.svelte';
 
@@ -10,12 +11,14 @@
 		transactions,
 		categories,
 		categoryTags,
-		accounts
+		accounts,
+		wjerkMerchants
 	}: {
 		transactions: Transaction[];
 		categories: string[];
 		categoryTags: Record<string, NecessityTag>;
 		accounts: string[];
+		wjerkMerchants: string[];
 	} = $props();
 
 	// Same stable mapping the category chart uses, so a category's color
@@ -32,6 +35,7 @@
 	let sortDir = $state<'asc' | 'desc'>('desc');
 	let search = $state('');
 	let categoryFilter = $state('');
+	let wjerkOnly = $state(false);
 	let pageSize = $state<PageSize>(100);
 	let page = $state(0);
 
@@ -39,6 +43,7 @@
 		transactions
 			.filter((t) => !search || t.description.toLowerCase().includes(search.toLowerCase()))
 			.filter((t) => !categoryFilter || t.category === categoryFilter)
+			.filter((t) => !wjerkOnly || isWjerk(t, wjerkMerchants))
 			.sort((a, b) => {
 				let av: string | number = a[sortCol];
 				let bv: string | number = b[sortCol];
@@ -60,6 +65,7 @@
 	$effect(() => {
 		search;
 		categoryFilter;
+		wjerkOnly;
 		sortCol;
 		sortDir;
 		pageSize;
@@ -81,7 +87,7 @@
 <div class="panel">
 	<div class="panel-header flex flex-wrap gap-4 items-center justify-between">
 		<span>Transactions</span>
-		<div class="flex gap-2">
+		<div class="flex flex-wrap items-center gap-2">
 			<input class="field" type="search" placeholder="Search description…" bind:value={search} />
 			<select class="field" bind:value={categoryFilter}>
 				<option value="">All categories</option>
@@ -89,6 +95,10 @@
 					<option value={c}>{c}</option>
 				{/each}
 			</select>
+			<label class="flex items-center gap-1 text-sm">
+				<input type="checkbox" bind:checked={wjerkOnly} />
+				Wjerk only
+			</label>
 		</div>
 	</div>
 	<div class="panel-body">
@@ -102,7 +112,8 @@
 					<th class="pb-2 px-2 cursor-pointer" onclick={() => toggleSort('category')}>Category</th>
 					<th class="pb-2 px-2">Necessity</th>
 					<th class="pb-2 px-2 cursor-pointer text-right" onclick={() => toggleSort('amount')}>Amount</th>
-					<th class="pb-2 px-2" title="One-time capital purchase (a car, an appliance) — excluded from budget-suggestion averages">Major?</th>
+					<th class="pb-2 px-2" title="One-off: a capital purchase (a car, an appliance) or the one-time money that paid for it — excluded from budget-suggestion averages and shown separately in the totals">Major?</th>
+					<th class="pb-2 px-2" title="Wjerk business expense or income — included in the accountant export">Wjerk</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -165,6 +176,20 @@
 									type="checkbox"
 									name="isMajorPurchase"
 									checked={t.isMajorPurchase}
+									aria-label="Major purchase: {t.description}"
+									onchange={(e) => (e.currentTarget as HTMLInputElement).form?.requestSubmit()}
+								/>
+							</form>
+						</td>
+						<td class="py-2 px-2 text-center">
+							<form method="POST" action="?/setWjerk" use:enhance>
+								<input type="hidden" name="transactionId" value={t.id} />
+								<input
+									type="checkbox"
+									name="wjerk"
+									checked={isWjerk(t, wjerkMerchants)}
+									aria-label="Wjerk: {t.description}"
+									title={t.wjerk === null ? 'Merchant default' : 'Set on this transaction'}
 									onchange={(e) => (e.currentTarget as HTMLInputElement).form?.requestSubmit()}
 								/>
 							</form>

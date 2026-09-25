@@ -9,6 +9,7 @@ import { bucketByCategory, bucketByTime, topMerchants } from '$lib/finance/chart
 import { detectRecurring } from '$lib/finance/recurring';
 import { filterByPeriod, availableYears, type PeriodKey } from '$lib/finance/period';
 import { setCategoryTag, setTransactionTag, tagRollup } from '$lib/finance/tags';
+import { setTransactionWjerk, wjerkYearTotals } from '$lib/finance/wjerk';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const state = await loadState();
@@ -28,7 +29,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		timeChart: bucketByTime(filtered),
 		recurring: detectRecurring(state.transactions), // full history, ignores period — matches v1
 		topMerchants: topMerchants(filtered),
-		tagRollup: tagRollup(filtered, state.categoryTags)
+		tagRollup: tagRollup(filtered, state.categoryTags),
+		wjerkYears: wjerkYearTotals(state)
 	};
 };
 
@@ -110,6 +112,41 @@ export const actions: Actions = {
 			if (txn) txn.isMajorPurchase = isMajorPurchase;
 		});
 		return { updated: true };
+	},
+
+	setWjerk: async ({ request }) => {
+		const form = await request.formData();
+		const transactionId = String(form.get('transactionId') ?? '');
+		const wjerk = form.get('wjerk') === 'on';
+		if (!transactionId) return fail(400, { message: 'Missing transactionId' });
+
+		await updateState((state) => {
+			setTransactionWjerk(state, transactionId, wjerk);
+		});
+		return { updated: true };
+	},
+
+	addWjerkMerchant: async ({ request }) => {
+		const form = await request.formData();
+		const keyword = String(form.get('keyword') ?? '')
+			.trim()
+			.toLowerCase();
+		if (!keyword) return fail(400, { message: 'Missing keyword' });
+
+		await updateState((state) => {
+			if (!state.wjerkMerchants.includes(keyword)) state.wjerkMerchants.push(keyword);
+		});
+		return { added: true };
+	},
+
+	deleteWjerkMerchant: async ({ request }) => {
+		const form = await request.formData();
+		const keyword = String(form.get('keyword') ?? '');
+
+		await updateState((state) => {
+			state.wjerkMerchants = state.wjerkMerchants.filter((k) => k !== keyword);
+		});
+		return { deleted: true };
 	},
 
 	setCategoryTag: async ({ request }) => {

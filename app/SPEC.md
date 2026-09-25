@@ -22,11 +22,14 @@ a **multi-year view** — reframing the tool from "here's what happened" to
 Transaction {
   id, date, description, account, amount, flow, category, manual,
   tag: "essential" | "discretionary" | "wasteful" | null  // null = inherit category default
+  isMajorPurchase: boolean
+  wjerk: boolean | null  // null = inherit from wjerkMerchants
 }
 Rule { keyword, category }
 Budget { month: "YYYY-MM", category, allocated: number }
 ImportedFile { fileName, contentHash, importedAt, added, skipped }
-AppState { version, transactions, rules, accounts, budgets, categoryTags, importedFiles }
+AppState { version, transactions, rules, accounts, budgets, categoryTags, importedFiles,
+           sinkingFunds, wjerkMerchants }
 ```
 
 Persistence is a single file, written atomically (temp file + rename) and
@@ -70,6 +73,38 @@ wasteful line items, and — the most useful cross-reference — recurring
 charges whose effective tag is discretionary/wasteful, ranked by annualized
 cost.
 
+## Wjerk (business) flag
+
+Wjerk is the user's business. A transaction can be marked Wjerk *alongside*
+its category (a Cloudflare domain renewal stays in Subscriptions and is also
+Wjerk), so the budget sees real categories and the accountant gets one list.
+Same inherit/override shape as necessity tags: `state.wjerkMerchants` holds
+lowercase substring keywords that make matching transactions Wjerk by
+default; the per-transaction checkbox stores an override only when it
+differs from that default (flipping it back returns to `null`/inherit).
+The Wjerk panel shows per-year spent/received totals and links to
+`/export?wjerk=1&year=YYYY` — Wjerk transactions only, oldest first. The
+full export gains a trailing `wjerk` column.
+
+## Debt payoff (`/payoff`)
+
+`state.debts` holds cards typed in from statements (balance, APR, minimum,
+optional intro APR + months) — CSVs carry transactions, not balances, so
+these can't be derived. Each debt can link to an imported account; the
+page then compares the typed-in APR × balance against that account's
+recent average Interest charges as a sanity check, and suggests a monthly
+amount from recent card payments (Transfer inflows on the card side).
+
+`simulatePayoff()` (`finance/payoff.ts`, pure): interest accrues before
+payment each month; every debt gets its minimum; the rest of the monthly
+amount goes to one target at a time (avalanche = highest current rate,
+snowball = smallest balance), and paid-off minimums roll over. The
+"minimums only" baseline disables rollover. 600-month horizon — past that
+the result is "never". The What-if panel (client-side, never saved)
+compares minimums only / plan / plan + extra / plan + a balance transfer
+(`withBalanceTransfer()`: chosen debts merge onto one 0%-intro card with
+the fee added up front and the moved minimums combined) / both.
+
 ## Multi-year view
 
 The period selector gains "This year" plus one option per historical year
@@ -101,8 +136,5 @@ flags like budget overspend.
 - **Manual CSV upload fallback**: dropping files via Finder into
   `data/inbox/` is the primary flow; a browser file-input fallback that
   writes into the same folder was planned but not built.
-- **Debt-payoff planner** (snowball/avalanche): explicitly out of scope for
-  this build; the data model doesn't fight it (Fees/Interest already tag
-  as wasteful), but nothing calculates a payoff schedule.
 - Multi-currency, bank API integrations (Plaid, etc.), and user accounts —
   all remain non-goals, unchanged from v1.

@@ -30,7 +30,10 @@ export const load: PageServerLoad = async ({ url }) => {
 	const majorPurchases = filtered
 		.filter((t) => t.isMajorPurchase)
 		.sort((a, b) => b.amount - a.amount);
-	const majorPurchasesTotal = majorPurchases.reduce((sum, t) => sum + t.amount, 0);
+	// Outflows only — a one-off inflow flagged alongside (the deposit that
+	// paid for the car) is listed with a + but doesn't offset the headline,
+	// which is what the purchases cost.
+	const majorPurchasesTotal = majorPurchases.reduce((sum, t) => sum + (t.flow === 'out' ? t.amount : 0), 0);
 
 	// Interest + Fees: the real, avoidable cost of carrying a card balance.
 	// Broken out per account within the selected period (so you know which

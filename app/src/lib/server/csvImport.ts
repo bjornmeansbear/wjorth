@@ -93,7 +93,8 @@ export function importCsvRows(state: AppState, csvText: string, mapping: ImportM
 			category: categorize(desc, state.rules),
 			manual: false,
 			tag: null,
-			isMajorPurchase: false
+			isMajorPurchase: false,
+			wjerk: null
 		};
 
 		state.transactions.push(txn);
